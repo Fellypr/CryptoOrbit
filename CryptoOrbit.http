@@ -1,0 +1,6 @@
+@CryptoOrbit_HostAddress = http://localhost:5073
+
+GET {{CryptoOrbit_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,6 @@
+appsettings.json
+appsettings.*.json
+.Agents/
+.Agents/**
+.env
+.env.*
