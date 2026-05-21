@@ -48,6 +48,18 @@
               "target": "Package",
               "version": "[8.0.*, )"
             },
+            "Microsoft.SemanticKernel": {
+              "target": "Package",
+              "version": "[1.76.0, )"
+            },
+            "Microsoft.SemanticKernel.Connectors.Google": {
+              "target": "Package",
+              "version": "[1.76.0-alpha, )"
+            },
+            "Mscc.GenerativeAI": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[8.0.*, )"

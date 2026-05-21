@@ -1,44 +1,68 @@
+using CryptoOrbit.Configurations;
+using CryptoOrbit.Interfaces;
+using CryptoOrbit.Services;
+using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+builder.Services.AddScoped<ICripto, CriptoService>();
 
-// Configure the HTTP request pipeline.
+
+var apiKeyGoogle = builder.Configuration["GeminiSettings:ApiKey"];
+
+#pragma warning disable SKEXP0070
+builder.Services.AddKernel()
+                .AddGoogleAIGeminiChatCompletion(
+                    apiKey: apiKeyGoogle,
+                    modelId: "gemini-2.5-flash"
+                );
+#pragma warning restore SKEXP0070
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins(
+            "http://localhost:3000"
+        )
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+
+
+builder.Services.Configure<ExternalServicesOptions>
+(
+    builder.Configuration.GetSection("ExternalServices")
+);
+
+builder.Services.AddHttpClient("CryptoApi", (servicesProvider,client) =>
+{
+    var options = servicesProvider.GetRequiredService<IOptions<ExternalServicesOptions>>();
+    client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/");
+    client.DefaultRequestHeaders.Add("x-cg-demo-api-key", options.Value.ApiKeyCoin);
+});
+
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
+else
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
+    app.UseHttpsRedirection();   
+}
+app.UseCors("AllowFrontend");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
