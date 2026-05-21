@@ -32,6 +32,6 @@ namespace CryptoOrbit.Dtos
         public decimal TotalVolume { get; set; }
 
         [JsonPropertyName("recommendation")]
-        public string Recommendation { get; set; }
+        public string? Recommendation { get; set; }
     }
 }

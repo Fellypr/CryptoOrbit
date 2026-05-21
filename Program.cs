@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICripto, CriptoService>();
+builder.Services.AddScoped<IGeminiInterfece, GeminiServices>();
 
 
 var apiKeyGoogle = builder.Configuration["GeminiSettings:ApiKey"];
@@ -21,7 +22,7 @@ var apiKeyGoogle = builder.Configuration["GeminiSettings:ApiKey"];
 builder.Services.AddKernel()
                 .AddGoogleAIGeminiChatCompletion(
                     apiKey: apiKeyGoogle,
-                    modelId: "gemini-2.5-flash"
+                    modelId: "gemini-2.5-flash-lite"
                 );
 #pragma warning restore SKEXP0070
 
