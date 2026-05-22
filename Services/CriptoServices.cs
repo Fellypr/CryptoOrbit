@@ -4,6 +4,7 @@ using CryptoOrbit.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using Microsoft.SemanticKernel;
 
 namespace CryptoOrbit.Services
 {
@@ -11,9 +12,9 @@ namespace CryptoOrbit.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ExternalServicesOptions _options;
-        private readonly GeminiServices _geminiServices;
+        private readonly IGeminiInterfece _geminiServices;
 
-        public CriptoService(IHttpClientFactory httpClientFactory, IOptions<ExternalServicesOptions> options, GeminiServices geminiServices)
+        public CriptoService(IHttpClientFactory httpClientFactory, IOptions<ExternalServicesOptions> options, IGeminiInterfece geminiServices)
         {
             _httpClientFactory = httpClientFactory;
             _options = options.Value;
@@ -29,15 +30,17 @@ namespace CryptoOrbit.Services
 
             return listCoins ?? new List<CriptoDto>();
         }
-        public async Task<CriptoDto> GetCryptoById(string idCoin)
+        public async Task<CriptoDto> GetCryptoById(string nameCoin)
         {
-            var listCoins = await GetAllCoins();
-            var findId = listCoins.FirstOrDefault(x => x.Name.Equals(idCoin, StringComparison.OrdinalIgnoreCase));
-            if (findId == null)
+            try
             {
-                throw new Exception("Moeda não encontrada");
-            }
-            var prompt = $@"# INSTRUÇÕES DO SISTEMA: Analista de Criptoativos (Output JSON)
+                var listCoins = await GetAllCoins();
+                var findId = listCoins.FirstOrDefault(x => x.Name.Equals(nameCoin, StringComparison.OrdinalIgnoreCase));
+                if (findId == null)
+                {
+                    throw new Exception("Moeda não encontrada");
+                }
+                var prompt = $@"# INSTRUÇÕES DO SISTEMA: Analista de Criptoativos (Output JSON)
 
 ## Seu Papel:
 Você é um microsserviço de análise financeira estruturada. Sua única função é receber dados de uma criptomoeda, calcular métricas e retornar um objeto JSON válido que corresponda exatamente à estrutura da classe `CriptoDto`.
@@ -62,21 +65,33 @@ Você é um microsserviço de análise financeira estruturada. Sua única funç�
 Os dados serão fornecidos pelo sistema no formato de propriedades brutas do ativo.""";
 
 
-        var geminiResponse = await _geminiServices.GetInfoCryptoForCoin(prompt);
-        if(geminiResponse == null)
-        {
-            throw new Exception("Erro ao obter dados da moeda");
-        }
-        var result = JsonSerializer.Deserialize<CriptoDto>(geminiResponse);
+                var geminiResponse = await _geminiServices.GetInfoCryptoForCoin(prompt);
+                if (geminiResponse == null)
+                {
+                    throw new Exception("Erro ao obter dados da moeda");
+                }
+                var result = JsonSerializer.Deserialize<CriptoDto>(geminiResponse);
 
-        if(result == null)
-        {
-            throw new Exception("Erro ao desserializar dados da moeda");
-        }
+                if (result != null)
+                {
+                    findId.Recommendation = result.Recommendation;
+                    findId.PriceRange = result.PriceRange;
+                    findId.TotalVolume = result.TotalVolume;
+                }
+                return result;
+            }
+            catch (HttpOperationException ex) when (ex.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable)
+            {
+                Console.WriteLine($"[erro 503 gemini] olha o error de serviço temporariamente indisponivel{ex}");
+                throw new ("O serviço de IA está temporariamente indisponível. Tente novamente em instantes.");
+                
+            }catch(Exception ex)
+            {
+                throw new ($"Error geral {ex}");
+            }
 
-        return result;
 
-        
-        }
+            }
+
     }
 }

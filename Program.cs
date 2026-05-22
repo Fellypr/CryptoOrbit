@@ -22,7 +22,7 @@ var apiKeyGoogle = builder.Configuration["GeminiSettings:ApiKey"];
 builder.Services.AddKernel()
                 .AddGoogleAIGeminiChatCompletion(
                     apiKey: apiKeyGoogle,
-                    modelId: "gemini-2.5-flash-lite"
+                    modelId: "gemini-2.5-flash"
                 );
 #pragma warning restore SKEXP0070
 

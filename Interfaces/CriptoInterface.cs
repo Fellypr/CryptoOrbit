@@ -7,5 +7,6 @@ namespace CryptoOrbit.Interfaces
     public interface ICripto
     {
         Task<List<CriptoDto>> GetAllCoins();
+        Task<CriptoDto>GetCryptoById(string name);
     }
 }

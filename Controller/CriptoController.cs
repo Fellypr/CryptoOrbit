@@ -18,8 +18,33 @@ namespace CryptoOrbit.Controller
         [HttpGet("get-all-coins")]
         public async Task<IActionResult> GetAllCoins()
         {
-            var result = await _criptoService.GetAllCoins();
-            return Ok(result);
+            try
+            {
+                var result = await _criptoService.GetAllCoins();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error ao carregar coin" + ex);
+
+            }
+        }
+        [HttpGet("get-info/{nameCoin}")]
+        public async Task<IActionResult> GetInfoCoin(string nameCoin)
+        {
+            if (nameCoin == null)
+            {
+                return BadRequest("Moeda não encontrada");
+            }
+            try
+            {
+                var response = await _criptoService.GetCryptoById(nameCoin);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error ao pega a informação da moeda {ex}");
+            }
         }
     }
 }
