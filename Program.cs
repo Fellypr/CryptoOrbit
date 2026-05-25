@@ -11,8 +11,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 
-builder.Services.AddScoped<ICripto, CriptoService>();
+builder.Services.AddHostedService<CriptoService>();
+
 builder.Services.AddScoped<IGeminiInterfece, GeminiServices>();
 
 
