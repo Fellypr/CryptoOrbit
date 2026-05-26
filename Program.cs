@@ -2,7 +2,7 @@ using CryptoOrbit.Configurations;
 using CryptoOrbit.Interfaces;
 using CryptoOrbit.Services;
 using Microsoft.Extensions.Options;
-using Microsoft.SemanticKernel;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,18 +15,11 @@ builder.Services.AddMemoryCache();
 
 builder.Services.AddHostedService<CriptoService>();
 
-builder.Services.AddScoped<IGeminiInterfece, GeminiServices>();
+builder.Services.AddHttpClient<IGroqInterfece, GroqServices>();
 
 
-var apiKeyGoogle = builder.Configuration["GeminiSettings:ApiKey"];
 
-#pragma warning disable SKEXP0070
-builder.Services.AddKernel()
-                .AddGoogleAIGeminiChatCompletion(
-                    apiKey: apiKeyGoogle,
-                    modelId: "gemini-2.5-flash"
-                );
-#pragma warning restore SKEXP0070
+
 
 
 builder.Services.AddCors(options =>
