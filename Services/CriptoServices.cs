@@ -98,8 +98,8 @@ namespace CryptoOrbit.Services
             {
                 var prompt = new
                 {
-                    model = "llama-3.3-70b-specdec", // Modelo altamente inteligente e rápido
-                    response_format = new { type = "json_object" }, // FORÇA o retorno a vir em JSON puro
+                    model = "llama-3.3-70b-versatile",
+                    response_format = new { type = "json_object" },
                     temperature = 0.1,
                     messages = new[]
                     {

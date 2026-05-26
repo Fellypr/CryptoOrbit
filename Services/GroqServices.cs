@@ -31,7 +31,12 @@ public class GroqServices : IGroqInterfece
             request.Headers.Add("Authorization", $"Bearer {_apiKey}");
 
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var erroDetalhado = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Erro detalhado da Groq: {erroDetalhado}");
+            }
 
             var responseString = await response.Content.ReadAsStringAsync();
 
