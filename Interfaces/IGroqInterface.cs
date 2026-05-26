@@ -1,10 +1,7 @@
-using CryptoOrbit.Services;
-
 namespace CryptoOrbit.Interfaces
 {
     public interface IGroqInterfece
     {
-        Task<string>InfoCryptoForCoin(Object prompt);
-        
+        Task<string> InfoCryptoForCoin(object prompt, string apiKey, CancellationToken cancellationToken = default);
     }
 }

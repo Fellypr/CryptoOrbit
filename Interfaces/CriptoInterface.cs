@@ -1,12 +1,11 @@
 using CryptoOrbit.Dtos;
-using Microsoft.AspNetCore.Mvc;
-
 
 namespace CryptoOrbit.Interfaces
 {
     public interface ICripto
     {
-        Task<List<CriptoDto>> GetAllCoins();
-        Task<CriptoDto>GetCryptoById(CriptoDto moeda,CancellationToken cancellationToken);
+        Task<List<CriptoDto>> GetAllCoinsAsync(string coinGeckoApiKey, CancellationToken cancellationToken = default);
+        Task<List<CriptoDto>> GetAllCoinsWithAnalysisAsync(string coinGeckoApiKey, string groqApiKey, CancellationToken cancellationToken = default);
+        Task<CriptoDto> GetCoinByNameAsync(string nameCoin, string coinGeckoApiKey, string groqApiKey, CancellationToken cancellationToken = default);
     }
 }

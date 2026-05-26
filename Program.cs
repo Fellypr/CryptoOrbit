@@ -1,64 +1,50 @@
-using CryptoOrbit.Configurations;
 using CryptoOrbit.Interfaces;
 using CryptoOrbit.Services;
-using Microsoft.Extensions.Options;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+const string CorsPolicyName = "AllowFrontend";
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
-builder.Services.AddHostedService<CriptoService>();
-
-builder.Services.AddHttpClient<IGroqInterfece, GroqServices>();
-
-
-
-
-
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policy => policy.WithOrigins(
-            "http://localhost:3000"
-        )
+    options.AddPolicy(CorsPolicyName, policy =>
+    {
+        policy
+            .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .WithHeaders("Content-Type", "X-Groq-Key", "x-cg-demo-api-key");
+    });
 });
 
+builder.Services
+    .AddHttpClient<IGroqInterfece, GroqServices>(client =>
+    {
+        client.BaseAddress = new Uri("https://api.groq.com/");
+    });
 
+builder.Services
+    .AddHttpClient<ICripto, CriptoService>(client =>
+    {
+        client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/");
+    });
 
-builder.Services.Configure<ExternalServicesOptions>
-(
-    builder.Configuration.GetSection("ExternalServices")
-);
-
-builder.Services.AddHttpClient("CryptoApi", (servicesProvider,client) =>
-{
-    var options = servicesProvider.GetRequiredService<IOptions<ExternalServicesOptions>>();
-    client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/");
-    client.DefaultRequestHeaders.Add("x-cg-demo-api-key", options.Value.ApiKeyCoin);
-});
+builder.Services.AddHostedService<CriptoCacheBackgroundService>();
 
 var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-else
-{
-    app.UseHttpsRedirection();   
-}
-app.UseCors("AllowFrontend");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.Run();
 
+app.UseHttpsRedirection();
+app.UseCors(CorsPolicyName);
+app.MapControllers();
+
+app.Run();
