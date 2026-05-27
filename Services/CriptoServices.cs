@@ -61,7 +61,7 @@ namespace CryptoOrbit.Services
             {
                 enrichedCoins.Add(await EnrichCoinAsync(coin, groqApiKey, cancellationToken));
 
-                await Task.Delay(TimeSpan.FromSeconds(5),cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(7),cancellationToken);
             }
 
             return enrichedCoins;
