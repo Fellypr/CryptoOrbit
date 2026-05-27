@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  crypto-orbit:
+    image: crypto-orbit:latest
+    container_name: crypto-orbit-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5073:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+
+    restart: always

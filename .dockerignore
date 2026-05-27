@@ -1,0 +1,22 @@
+# Ignore build artifacts and object directories
+**/bin/
+**/obj/
+
+# Ignore IDE files and settings
+**/.vs/
+**/.vscode/
+**/.idea/
+*.user
+*.suo
+
+# Ignore Git directory and config
+.git/
+.gitignore
+
+# Ignore Docker files themselves
+Dockerfile
+docker-compose.yml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
