@@ -1,67 +1,107 @@
-    using CryptoOrbit.Dtos;
-    using CryptoOrbit.Interfaces;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Caching.Memory;
+using CryptoOrbit.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-    namespace CryptoOrbit.Controller
+namespace CryptoOrbit.Controller
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CriptoController : ControllerBase
     {
-        [ApiController]
-        [Route("api/[controller]")]
-        public class CriptoController : ControllerBase
+        private readonly ICripto _criptoService;
+
+        public CriptoController(ICripto criptoService)
         {
-            
-            private readonly IMemoryCache _cache;
+            _criptoService = criptoService;
+        }
 
-            public CriptoController(IMemoryCache cache)
+        [HttpGet("get-all-coins")]
+        public async Task<IActionResult> GetAllCoins(
+            [FromHeader(Name = "x-cg-demo-api-key")] string coinGeckoApiKey,
+            [FromHeader(Name = "X-Groq-Key")] string groqApiKey,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(coinGeckoApiKey))
             {
-                
-                _cache = cache;
+                return BadRequest("O header x-cg-demo-api-key e obrigatorio.");
             }
 
-            [HttpGet("get-all-coins")]
-            public IActionResult GetAllCoins()
+            if (string.IsNullOrWhiteSpace(groqApiKey))
             {
-                try
-                {
-                    if(_cache.TryGetValue("all_cryptos_with_ai", out List<CriptoDto> listaProntaComIa))
-                    {
-                        return Ok(listaProntaComIa);
-                    }
-                    return StatusCode(503, "A IA está preparando as análises das moedas. Tente novamente em instantes.");
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest("Error ao carregar coin" + ex);
-
-                }
+                return BadRequest("O header X-Groq-Key e obrigatorio.");
             }
-            [HttpGet("{nameCoin}")]
-            public IActionResult GetInfoCoin(string nameCoin)
+
+            try
             {
-                if (nameCoin == null)
-                {
-                    return BadRequest("Moeda não encontrada");
-                }
-                try
-                {
-                    if (_cache.TryGetValue("all_cryptos_with_ai", out List<CriptoDto> listaCompleta))
-                    {
-                        var moedaEncontrada = listaCompleta
-                                    .FirstOrDefault(c => c.Name.Equals(nameCoin, StringComparison.OrdinalIgnoreCase));
+                var coins = await _criptoService.GetAllCoinsWithAnalysisAsync(
+                    coinGeckoApiKey,
+                    groqApiKey,
+                    cancellationToken);
 
-                        if (moedaEncontrada != null)
-                        {
-                            return Ok(moedaEncontrada);
-                        }
-                    }
-                    return StatusCode(503, "O sistema está inicializando os dados. Tente novamente em instantes.");
-                    
+                return Ok(coins);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(StatusCodes.Status502BadGateway, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao consultar os provedores externos: {ex.Message}");
+            }
+        }
 
-                }
-                catch (Exception ex)
+        [HttpGet("{nameCoin}")]
+        public async Task<IActionResult> GetInfoCoin(
+            string nameCoin,
+            [FromHeader(Name = "x-cg-demo-api-key")] string coinGeckoApiKey,
+            [FromHeader(Name = "X-Groq-Key")] string groqApiKey,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(nameCoin))
+            {
+                return BadRequest("O nome da moeda e obrigatorio.");
+            }
+
+            if (string.IsNullOrWhiteSpace(coinGeckoApiKey))
+            {
+                return BadRequest("O header x-cg-demo-api-key e obrigatorio.");
+            }
+
+            if (string.IsNullOrWhiteSpace(groqApiKey))
+            {
+                return BadRequest("O header X-Groq-Key e obrigatorio.");
+            }
+
+            try
+            {
+                var coin = await _criptoService.GetCoinByNameAsync(
+                    nameCoin,
+                    coinGeckoApiKey,
+                    groqApiKey,
+                    cancellationToken);
+
+                if (coin is null)
                 {
-                    return BadRequest($"Error ao pega a informação da moeda {ex}");
+                    return NotFound("Moeda nao encontrada.");
                 }
+
+                return Ok(coin);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(StatusCodes.Status502BadGateway, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao consultar os provedores externos: {ex.Message}");
             }
         }
     }
+}
