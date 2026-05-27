@@ -11,7 +11,13 @@
 O **CryptoOrbit** é um microsserviço inteligente desenvolvido em **ASP.NET Core Web API (.NET 8.0)** que realiza análises financeiras interpretativas de criptoativos em tempo real. Ele vai além das cotações tradicionais ao fundir métricas instantâneas de mercado da **CoinGecko** com relatórios analíticos gerados sob demanda por Inteligência Artificial (**Groq Llama-3.3-70b**).
 
 ---
+---
 
+<p align="center">
+  <img src="blob:https://gemini.google.com/9a458115-5ec0-4d02-957d-14d17e82f42f" alt="Arquitetura de Fluxo de Dados e Gestão de Cache do CryptoOrbit" width="90%">
+</p>
+
+---
 
 ## 🎯 Visão Geral
 
