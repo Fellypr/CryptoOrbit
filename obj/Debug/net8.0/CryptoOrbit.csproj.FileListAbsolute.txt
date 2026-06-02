@@ -1,5 +1,3 @@
-/home/fellype/Documentos/Projetos/CryptoOrbit/bin/Debug/net8.0/appsettings.Development.json
-/home/fellype/Documentos/Projetos/CryptoOrbit/bin/Debug/net8.0/appsettings.json
 /home/fellype/Documentos/Projetos/CryptoOrbit/bin/Debug/net8.0/CryptoOrbit
 /home/fellype/Documentos/Projetos/CryptoOrbit/bin/Debug/net8.0/CryptoOrbit.deps.json
 /home/fellype/Documentos/Projetos/CryptoOrbit/bin/Debug/net8.0/CryptoOrbit.runtimeconfig.json

@@ -33,7 +33,7 @@ builder.Services
         client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/");
     });
 
-builder.Services.AddHostedService<CriptoCacheBackgroundService>();
+
 
 var app = builder.Build();
 

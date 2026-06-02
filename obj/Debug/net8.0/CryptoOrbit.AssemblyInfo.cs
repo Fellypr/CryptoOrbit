@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CryptoOrbit")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+292704c4e9c5856da993a1c0caf50f4aa4d133ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+df2e06577fe5db41664d44ba2452cac423a4dc77")]
 [assembly: System.Reflection.AssemblyProductAttribute("CryptoOrbit")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CryptoOrbit")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

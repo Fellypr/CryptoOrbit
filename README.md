@@ -25,7 +25,7 @@ O **CryptoOrbit** é um microsserviço inteligente desenvolvido em **ASP.NET Cor
 |---|---|
 | 🤖 **Fusão de Cotações com IA** | Automatiza a interpretação de flutuações complexas de preços para o usuário final |
 | 📊 **Micro-Decisões de Sentimento** | Classifica instantaneamente o cenário do ativo: Alta, Correção ou Lateralização |
-| ⚡ **Mitigação de Latência** | Cache proativo em segundo plano garante respostas em escala de milissegundos |
+| ⚡ **Mitigação de Latência** | Cache em memória sob demanda garante respostas rápidas para moedas consultadas repetidamente |
 
 ---
 
@@ -36,25 +36,21 @@ A API adota práticas de **Clean Architecture** com forte desacoplamento via inj
 ```
 [ Cliente / Requisição HTTP ]
 │
-├──► [ CriptoController ]
+├──► [ CriptoController ] ◄──► IMemoryCache (Sob demanda, expiração de 10 min)
 │         │
-│         ▼
-│    [ ICripto / CriptoServices ]
-│         │
-│         ├─► IMemoryCache ──(HIT)──► Retorna JSON em milissegundos
+│         ├─► (Cache HIT) ──► Retorna JSON em milissegundos
 │         │
 │         └─► (Cache MISS / Expirado)
+│               │
+│               ▼
+│          [ ICripto / CriptoServices ]
 │               │
 │               ├─► CoinGecko API  (Preço, Volume, Variação 24h)
 │               │
 │               └─► IGroqInterface / GroqServices
 │                     │
 │                     ▼  (Temp: 0.1 | JSON Mode)
-│               [ Groq AI Llama-3.3 ]
-│
-▼ (A cada 12 horas)
-[ CriptoCacheBackgroundService ]
-└─► Top 20 Moedas ──► Atualiza IMemoryCache
+│                [ Groq AI Llama-3.3 ]
 ```
 
 ---
@@ -68,7 +64,7 @@ A API adota práticas de **Clean Architecture** com forte desacoplamento via inj
 │   └── ExternalServicesOptions.cs       # Mapeamento de opções de serviços externos
 │
 ├── 📁 Controller/
-│   └── CriptoController.cs              # Endpoints RESTful unificados
+│   └── CriptoController.cs              # Endpoints RESTful com suporte a cache sob demanda
 │
 ├── 📁 Dtos/
 │   └── CriptoDto.cs                     # Higienização e transporte seguro de payloads
@@ -82,8 +78,7 @@ A API adota práticas de **Clean Architecture** com forte desacoplamento via inj
 │
 └── 📁 Services/
     ├── CriptoServices.cs                # Orquestração de dados e montagem de prompts
-    ├── GroqServices.cs                  # Comunicação HTTP segura com a API do Groq
-    └── CriptoCacheBackgroundService.cs  # Worker para pré-processamento de cache
+    └── GroqServices.cs                  # Comunicação HTTP segura com a API do Groq
 ```
 
 ---
@@ -96,8 +91,8 @@ Para a listagem em lote (`GetAllCoinsWithAnalysisAsync`), o serviço introduz um
 ### 🎯 Determinismo na Resposta da IA
 O modo JSON nativo do modelo é forçado via `response_format = { type: "json_object" }` com temperatura calibrada em **0.1**, eliminando alucinações e garantindo conversão perfeita para o `CriptoDto`.
 
-### ⚡ Cache Proativo
-O `CriptoCacheBackgroundService` atualiza o `IMemoryCache` a cada **12 horas** para as 20 criptomoedas configuradas no `appsettings.json`, reduzindo o tempo de resposta de segundos para milissegundos.
+### ⚡ Cache Sob Demanda
+O `CriptoController` utiliza o `IMemoryCache` diretamente no endpoint `GetInfoCoin` com expiração absoluta de **10 minutos**. Isso reduz drasticamente o tempo de resposta (de segundos para milissegundos) para consultas consecutivas da mesma criptomoeda, além de otimizar o uso das APIs externas e de IA.
 
 ---
 
@@ -105,32 +100,31 @@ O `CriptoCacheBackgroundService` atualiza o `IMemoryCache` a cada **12 horas** p
 
 **Base URL:** `/api/Cripto`
 
-### 🔐 Headers Obrigatórios
-
-| Header | Tipo | Descrição |
-|---|---|---|
-| `x-cg-demo-api-key` | `string` | Chave de autenticação da plataforma CoinGecko |
-| `X-Groq-Key` | `string` | Token de acesso à API da Groq AI |
+### 🔐 Parâmetros e Headers por Endpoint
 
 ---
 
 ### `GET /api/Cripto/get-all-coins`
 
-Retorna um array com o relatório completo pré-analisado das **20 principais criptomoedas** do mercado mundial.
+Retorna um array com a lista das **20 principais criptomoedas** do mercado mundial diretamente da CoinGecko, sem enriquecimento da IA Groq (garantindo carregamento instantâneo).
 
-**Resposta:** `HTTP 200 OK` — Array de `CriptoDto`
+* **Header Obrigatório:**
+  * `x-cg-demo-api-key` (string): Chave de autenticação da CoinGecko.
+
+**Resposta:** `HTTP 200 OK` — Array de `CriptoDto` (com recomendação nula/vazia).
 
 ---
 
 ### `GET /api/Cripto/{nameCoin}`
 
-Retorna a análise preditiva e o sentimento mercadológico de uma moeda específica.
+Retorna a análise detalhada, com cálculo de oscilação e o relatório de recomendação estruturado pela IA Groq Llama 3.3.
 
-**Parâmetros:**
+* **Headers Obrigatórios:**
+  * `x-cg-demo-api-key` (string): Chave de autenticação da CoinGecko.
+  * `X-Groq-Key` (string): Token de acesso à API da Groq AI.
 
-| Parâmetro | Tipo | Exemplos |
-|---|---|---|
-| `nameCoin` | `string` | `bitcoin`, `ethereum`, `solana`, `btc` |
+* **Parâmetros de Rota:**
+  * `nameCoin` (string): Nome ou símbolo do ativo (ex: `bitcoin`, `solana`, `eth`).
 
 **Exemplo de Resposta (`HTTP 200 OK`):**
 

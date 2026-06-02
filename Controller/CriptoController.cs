@@ -1,5 +1,6 @@
 using CryptoOrbit.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CryptoOrbit.Controller
 {
@@ -8,16 +9,17 @@ namespace CryptoOrbit.Controller
     public class CriptoController : ControllerBase
     {
         private readonly ICripto _criptoService;
+        private readonly IMemoryCache _cache;
 
-        public CriptoController(ICripto criptoService)
+        public CriptoController(ICripto criptoService, IMemoryCache cache)
         {
             _criptoService = criptoService;
+            _cache = cache;
         }
 
         [HttpGet("get-all-coins")]
         public async Task<IActionResult> GetAllCoins(
             [FromHeader(Name = "x-cg-demo-api-key")] string coinGeckoApiKey,
-            [FromHeader(Name = "X-Groq-Key")] string groqApiKey,
             CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(coinGeckoApiKey))
@@ -25,16 +27,10 @@ namespace CryptoOrbit.Controller
                 return BadRequest("O header x-cg-demo-api-key e obrigatorio.");
             }
 
-            if (string.IsNullOrWhiteSpace(groqApiKey))
-            {
-                return BadRequest("O header X-Groq-Key e obrigatorio.");
-            }
-
             try
             {
-                var coins = await _criptoService.GetAllCoinsWithAnalysisAsync(
+                var coins = await _criptoService.GetAllCoinsAsync(
                     coinGeckoApiKey,
-                    groqApiKey,
                     cancellationToken);
 
                 return Ok(coins);
@@ -77,11 +73,24 @@ namespace CryptoOrbit.Controller
 
             try
             {
-                var coin = await _criptoService.GetCoinByNameAsync(
-                    nameCoin,
-                    coinGeckoApiKey,
-                    groqApiKey,
-                    cancellationToken);
+                string cacheKey = $"coin_info_{nameCoin.Trim().ToLowerInvariant()}";
+
+                if (!_cache.TryGetValue(cacheKey, out Dtos.CriptoDto coin))
+                {
+                    coin = await _criptoService.GetCoinByNameAsync(
+                        nameCoin,
+                        coinGeckoApiKey,
+                        groqApiKey,
+                        cancellationToken);
+
+                    if (coin is not null)
+                    {
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            .SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+
+                        _cache.Set(cacheKey, coin, cacheEntryOptions);
+                    }
+                }
 
                 if (coin is null)
                 {
