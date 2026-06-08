@@ -7,7 +7,7 @@ namespace CryptoOrbit.Services
 {
     public class CriptoService : ICripto
     {
-        private const string MarketQuery = "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false";
+        private const string MarketQuery = "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false";
 
         private readonly HttpClient _httpClient;
         private readonly IGroqInterfece _groqService;
@@ -151,8 +151,15 @@ Voce e um microsservico de analise financeira estruturada. Sua unica funcao e re
 - Se price_change_percentage_24h for menor que -1.5%, use ""correcao"".
 - Se estiver entre -1.5% e 1.5%, use ""lateralizacao"".
 3. recommendation deve ser uma frase completa e detalhada. Nunca retorne apenas ""correcao"", ""tendencia de alta"" ou ""lateralizacao"".
-4. Monte o campo recommendation seguindo exatamente este template, substituindo os valores pelos dados recebidos:
-""O ativo {coin.Name} ({coin.Symbol}) apresenta um cenario de [cenario] nas ultimas 24 horas, acumulando uma variacao de {coin.PriceChangePercentage24h}%. Com o preco atual cotado em {coin.CurrentPrice}, o ativo registrou uma oscilacao diaria entre a minima de {coin.Low24h} e a maxima de {coin.High24h}, movimentando um volume total de {coin.TotalVolume} no mercado.""
+4. Monte o campo recommendation seguindo exatamente a lógica abaixo, substituindo os valores entre chaves  pelos dados recebidos. Você deve escolher apenas uma das duas ramificações (COMPRAR ou AGUARDAR) dependendo da sua análise de mercado:
+
+O ativo {coin.Name} ({coin.Symbol}) apresenta um cenário de [cenário] nas últimas 24 horas, acumulando uma variação de {coin.PriceChangePercentage24h}%. Com o preço atual cotado em {coin.CurrentPrice}, o ativo registrou uma oscilação diária entre a mínima de {coin.Low24h} e a máxima de {coin.High24h}, movimentando um volume total de {coin.TotalVolume} no mercado.
+
+[SE A SUA ANÁLISE FOR DE COMPRA, ADICIONE ESTE PARÁGRAFO]:
+Com base nos indicadores técnicos e no fluxo de volume, nossa IA recomenda a COMPRA do ativo. Para gerenciamento de risco, estimamos uma alocação sugerida de [insira aqui uma % realista entre 1% e 5%] do seu capital disponível, o que equivaleria a um aporte de aproximadamente [calcule o valor com base na % sugerida e no saldo do usuário] na cotação atual. Essa estratégia visa surfar a tendência sem expor excessivamente a sua carteira.
+
+[SE A SUA ANÁLISE FOR DE NÃO COMPRAR, ADICIONE ESTE PARÁGRAFO]:
+No momento, nossa IA recomenda AGUARDAR e não realizar compras. O ativo enfrenta uma desvalorização/pressão de venda que pode se estender, acumulando uma perda de {coin.PriceChangePercentage24h}% nas últimas 24 horas. Entrar no mercado agora significa correr o risco de 'pegar uma faca caindo'. Sugerimos esperar o preço testar a região de suporte em {coin.Low24h} antes de uma nova avaliação.""
 ## Dados de entrada
 Os dados abaixo representam a criptomoeda a ser analisada."
                     },
