@@ -9,7 +9,7 @@
       "CryptoOrbit/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "8.0.26",
-          "Microsoft.EntityFrameworkCore.Design": "8.0.27",
+          "Microsoft.EntityFrameworkCore.Design": "8.0.31",
           "Microsoft.SemanticKernel": "1.76.0",
           "Microsoft.SemanticKernel.Connectors.Google": "1.76.0-alpha",
           "Mscc.GenerativeAI": "3.1.0",
@@ -83,8 +83,7 @@
       "Google.GenAI/0.11.0": {
         "dependencies": {
           "Google.Apis.Auth": "1.73.0",
-          "Microsoft.Extensions.AI.Abstractions": "10.5.0",
-          "MimeTypes": "2.5.2"
+          "Microsoft.Extensions.AI.Abstractions": "10.5.0"
         },
         "runtime": {
           "lib/net8.0/Google.GenAI.dll": {
@@ -171,15 +170,7 @@
           }
         }
       },
-      "Microsoft.CodeAnalysis.Analyzers/3.3.3": {},
       "Microsoft.CodeAnalysis.Common/4.5.0": {
-        "dependencies": {
-          "Microsoft.CodeAnalysis.Analyzers": "3.3.3",
-          "System.Collections.Immutable": "6.0.0",
-          "System.Reflection.Metadata": "6.0.1",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0",
-          "System.Text.Encoding.CodePages": "6.0.0"
-        },
         "runtime": {
           "lib/netcoreapp3.1/Microsoft.CodeAnalysis.dll": {
             "assemblyVersion": "4.5.0.0",
@@ -392,53 +383,51 @@
           }
         }
       },
-      "Microsoft.EntityFrameworkCore/8.0.27": {
+      "Microsoft.EntityFrameworkCore/8.0.31": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.27",
-          "Microsoft.EntityFrameworkCore.Analyzers": "8.0.27",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.31",
           "Microsoft.Extensions.Caching.Memory": "8.0.1",
           "Microsoft.Extensions.Logging": "10.0.3"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.dll": {
-            "assemblyVersion": "8.0.27.0",
-            "fileVersion": "8.0.2726.23001"
+            "assemblyVersion": "8.0.31.0",
+            "fileVersion": "8.0.3126.42108"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Abstractions/8.0.27": {
+      "Microsoft.EntityFrameworkCore.Abstractions/8.0.31": {
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Abstractions.dll": {
-            "assemblyVersion": "8.0.27.0",
-            "fileVersion": "8.0.2726.23001"
+            "assemblyVersion": "8.0.31.0",
+            "fileVersion": "8.0.3126.42108"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Analyzers/8.0.27": {},
-      "Microsoft.EntityFrameworkCore.Design/8.0.27": {
+      "Microsoft.EntityFrameworkCore.Design/8.0.31": {
         "dependencies": {
           "Humanizer.Core": "2.14.1",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.5.0",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.27",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.31",
           "Microsoft.Extensions.DependencyModel": "8.0.2",
           "Mono.TextTemplating": "2.2.1"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Design.dll": {
-            "assemblyVersion": "8.0.27.0",
-            "fileVersion": "8.0.2726.23001"
+            "assemblyVersion": "8.0.31.0",
+            "fileVersion": "8.0.3126.42108"
           }
         }
       },
-      "Microsoft.EntityFrameworkCore.Relational/8.0.27": {
+      "Microsoft.EntityFrameworkCore.Relational/8.0.31": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.27",
+          "Microsoft.EntityFrameworkCore": "8.0.31",
           "Microsoft.Extensions.Configuration.Abstractions": "10.0.3"
         },
         "runtime": {
           "lib/net8.0/Microsoft.EntityFrameworkCore.Relational.dll": {
-            "assemblyVersion": "8.0.27.0",
-            "fileVersion": "8.0.2726.23001"
+            "assemblyVersion": "8.0.31.0",
+            "fileVersion": "8.0.3126.42108"
           }
         }
       },
@@ -484,7 +473,6 @@
           }
         }
       },
-      "Microsoft.Extensions.ApiDescription.Server/6.0.5": {},
       "Microsoft.Extensions.Caching.Abstractions/10.0.6": {
         "dependencies": {
           "Microsoft.Extensions.Primitives": "10.0.6"
@@ -800,7 +788,6 @@
           }
         }
       },
-      "MimeTypes/2.5.2": {},
       "Mono.TextTemplating/2.2.1": {
         "dependencies": {
           "System.CodeDom": "7.0.0"
@@ -853,9 +840,9 @@
       },
       "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.11": {
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "8.0.27",
-          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.27",
-          "Microsoft.EntityFrameworkCore.Relational": "8.0.27",
+          "Microsoft.EntityFrameworkCore": "8.0.31",
+          "Microsoft.EntityFrameworkCore.Abstractions": "8.0.31",
+          "Microsoft.EntityFrameworkCore.Relational": "8.0.31",
           "Npgsql": "8.0.6"
         },
         "runtime": {
@@ -879,7 +866,6 @@
       },
       "Swashbuckle.AspNetCore/6.6.2": {
         "dependencies": {
-          "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
           "Swashbuckle.AspNetCore.Swagger": "6.6.2",
           "Swashbuckle.AspNetCore.SwaggerGen": "6.6.2",
           "Swashbuckle.AspNetCore.SwaggerUI": "6.6.2"
@@ -937,11 +923,6 @@
             "assemblyVersion": "7.0.0.0",
             "fileVersion": "7.0.22.51805"
           }
-        }
-      },
-      "System.Collections.Immutable/6.0.0": {
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
       "System.Composition/6.0.0": {
@@ -1072,17 +1053,6 @@
             "assemblyVersion": "10.0.0.6",
             "fileVersion": "10.0.626.17701"
           }
-        }
-      },
-      "System.Reflection.Metadata/6.0.1": {
-        "dependencies": {
-          "System.Collections.Immutable": "6.0.0"
-        }
-      },
-      "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
-      "System.Text.Encoding.CodePages/6.0.0": {
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
       "System.Text.Encodings.Web/10.0.6": {
@@ -1227,13 +1197,6 @@
       "path": "microsoft.bcl.hashcode/1.1.1",
       "hashPath": "microsoft.bcl.hashcode.1.1.1.nupkg.sha512"
     },
-    "Microsoft.CodeAnalysis.Analyzers/3.3.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-j/rOZtLMVJjrfLRlAMckJLPW/1rze9MT1yfWqSIbUPGRu1m1P0fuo9PmqapwsmePfGB5PJrudQLvmUOAMF0DqQ==",
-      "path": "microsoft.codeanalysis.analyzers/3.3.3",
-      "hashPath": "microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512"
-    },
     "Microsoft.CodeAnalysis.Common/4.5.0": {
       "type": "package",
       "serviceable": true,
@@ -1262,40 +1225,33 @@
       "path": "microsoft.codeanalysis.workspaces.common/4.5.0",
       "hashPath": "microsoft.codeanalysis.workspaces.common.4.5.0.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore/8.0.27": {
+    "Microsoft.EntityFrameworkCore/8.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-fe3vhlibOcspurgPucQQW4KGC3Z2aj3hafb68AKxFVFawzT5+x6FA4NGzLrWMDs682A3uTodd0hOHX0ZUDwdzA==",
-      "path": "microsoft.entityframeworkcore/8.0.27",
-      "hashPath": "microsoft.entityframeworkcore.8.0.27.nupkg.sha512"
+      "sha512": "sha512-RlM+Py8bIwT1f1yKPq9LDPTK08ZVgC157oAQlIIYRhSTXj1bYpSqWHTvWXb8Wghyfqfsi1wo9hIviiEzTZjdpA==",
+      "path": "microsoft.entityframeworkcore/8.0.31",
+      "hashPath": "microsoft.entityframeworkcore.8.0.31.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Abstractions/8.0.27": {
+    "Microsoft.EntityFrameworkCore.Abstractions/8.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/pqkVwmVsMOePo58AlmpXCQOOsGTqMahgbANhmP7WZMd9PiXLnzVxU06R+HbW0u+YdZ4w4aBDvVg+vUpGKydJg==",
-      "path": "microsoft.entityframeworkcore.abstractions/8.0.27",
-      "hashPath": "microsoft.entityframeworkcore.abstractions.8.0.27.nupkg.sha512"
+      "sha512": "sha512-2dnfIgy8TaEY31mWbQ2xCYWz/YgP2/cGFKhBskmLhovmn5PLgrnfcVLLFaGOZ0WhC2W0VzG8ps60NXEzflZ1dw==",
+      "path": "microsoft.entityframeworkcore.abstractions/8.0.31",
+      "hashPath": "microsoft.entityframeworkcore.abstractions.8.0.31.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Analyzers/8.0.27": {
+    "Microsoft.EntityFrameworkCore.Design/8.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9hl8QNHrgOtidE7I5aom9ABcXCIjv1fnRxgNNC4PaA043zPte28ifvkW2KK91OoAYF7trZSmU1qYScTra3N7HA==",
-      "path": "microsoft.entityframeworkcore.analyzers/8.0.27",
-      "hashPath": "microsoft.entityframeworkcore.analyzers.8.0.27.nupkg.sha512"
+      "sha512": "sha512-hBrf5UObI52y54tQmXompjbEIfen7Fu2royXZDdJ883zBnUU5HcHRGTbKVdD9b1rKZbaxas6Vhy61XcA4YcpQg==",
+      "path": "microsoft.entityframeworkcore.design/8.0.31",
+      "hashPath": "microsoft.entityframeworkcore.design.8.0.31.nupkg.sha512"
     },
-    "Microsoft.EntityFrameworkCore.Design/8.0.27": {
+    "Microsoft.EntityFrameworkCore.Relational/8.0.31": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Pe+TpzQTow3Ql1UFcQ7M8fJ7dpzfW4gVYtY/wWLMfArWWpDfKkDWhmJS5d02YZnDIl9rtfw0eMGqLy40pezUWg==",
-      "path": "microsoft.entityframeworkcore.design/8.0.27",
-      "hashPath": "microsoft.entityframeworkcore.design.8.0.27.nupkg.sha512"
-    },
-    "Microsoft.EntityFrameworkCore.Relational/8.0.27": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ulztr0Jcvzg6bbL8wuwshVKcuU4GMeObvSJopg9KM/MBHwEcOroawdoYOJKmcmfmIp2dfXCl0n/qNRLfBfJwZg==",
-      "path": "microsoft.entityframeworkcore.relational/8.0.27",
-      "hashPath": "microsoft.entityframeworkcore.relational.8.0.27.nupkg.sha512"
+      "sha512": "sha512-n3okTRjH9rovMpp2rXrqsI+AUFbaykwOg1IOqVN4MKh1E3lqOd6oTRiUh67W4zFj8C4GOM/e1GSNbDQCn73LFg==",
+      "path": "microsoft.entityframeworkcore.relational/8.0.31",
+      "hashPath": "microsoft.entityframeworkcore.relational.8.0.31.nupkg.sha512"
     },
     "Microsoft.Extensions.AI/10.5.0": {
       "type": "package",
@@ -1317,13 +1273,6 @@
       "sha512": "sha512-K1ZTH8waff1pnnDG6kPN07ce2oq4AJKFds4MGmE+EX+f0QYMO316HKSAcCZjrhnisAj+rJ4nSkrG9FjgjTA9nw==",
       "path": "microsoft.extensions.ai.openai/10.5.0",
       "hashPath": "microsoft.extensions.ai.openai.10.5.0.nupkg.sha512"
-    },
-    "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Ckb5EDBUNJdFWyajfXzUIMRkhf52fHZOQuuZg/oiu8y7zDCVwD0iHhew6MnThjHmevanpxL3f5ci2TtHQEN6bw==",
-      "path": "microsoft.extensions.apidescription.server/6.0.5",
-      "hashPath": "microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512"
     },
     "Microsoft.Extensions.Caching.Abstractions/10.0.6": {
       "type": "package",
@@ -1507,13 +1456,6 @@
       "path": "microsoft.semantickernel.core/1.76.0",
       "hashPath": "microsoft.semantickernel.core.1.76.0.nupkg.sha512"
     },
-    "MimeTypes/2.5.2": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-vm4xrNt+i6OVRQ8vhfCcmDIUg3qvjyCTkSTNVTDFohsG6CXEpMaVFkidECL6yRYpHDnz4TqXhDoEQAcnHCu/tw==",
-      "path": "mimetypes/2.5.2",
-      "hashPath": "mimetypes.2.5.2.nupkg.sha512"
-    },
     "Mono.TextTemplating/2.2.1": {
       "type": "package",
       "serviceable": true,
@@ -1597,13 +1539,6 @@
       "sha512": "sha512-GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A==",
       "path": "system.codedom/7.0.0",
       "hashPath": "system.codedom.7.0.0.nupkg.sha512"
-    },
-    "System.Collections.Immutable/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-l4zZJ1WU2hqpQQHXz1rvC3etVZN+2DLmQMO79FhOTZHMn8tDRr+WU287sbomD0BETlmKDn0ygUgVy9k5xkkJdA==",
-      "path": "system.collections.immutable/6.0.0",
-      "hashPath": "system.collections.immutable.6.0.0.nupkg.sha512"
     },
     "System.Composition/6.0.0": {
       "type": "package",
@@ -1695,27 +1630,6 @@
       "sha512": "sha512-DOZ8Z8CxHVWU8gSo4ZQ8sCAPIQb+agp56ISuMiu39WWZiV+reZwn9NM1tj4lRDfqLaOAinF6zTi0csmFBQes9Q==",
       "path": "system.numerics.tensors/10.0.6",
       "hashPath": "system.numerics.tensors.10.0.6.nupkg.sha512"
-    },
-    "System.Reflection.Metadata/6.0.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-III/lNMSn0ZRBuM9m5Cgbiho5j81u0FAEagFX5ta2DKbljZ3T0IpD8j+BIiHQPeKqJppWS9bGEp6JnKnWKze0g==",
-      "path": "system.reflection.metadata/6.0.1",
-      "hashPath": "system.reflection.metadata.6.0.1.nupkg.sha512"
-    },
-    "System.Runtime.CompilerServices.Unsafe/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg==",
-      "path": "system.runtime.compilerservices.unsafe/6.0.0",
-      "hashPath": "system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
-    },
-    "System.Text.Encoding.CodePages/6.0.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-ZFCILZuOvtKPauZ/j/swhvw68ZRi9ATCfvGbk1QfydmcXBkIWecWKn/250UH7rahZ5OoDBaiAudJtPvLwzw85A==",
-      "path": "system.text.encoding.codepages/6.0.0",
-      "hashPath": "system.text.encoding.codepages.6.0.0.nupkg.sha512"
     },
     "System.Text.Encodings.Web/10.0.6": {
       "type": "package",

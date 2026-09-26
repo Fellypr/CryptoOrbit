@@ -1,32 +1,49 @@
+using CryptoOrbit.Configurations;
 using CryptoOrbit.Dtos;
 using CryptoOrbit.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace CryptoOrbit.Services
 {
     public class CriptoService : ICripto
     {
-        private const string MarketQuery = "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false";
-
         private readonly HttpClient _httpClient;
         private readonly IGroqInterfece _groqService;
+        private readonly ExternalServicesOptions _options;
 
-        public CriptoService(HttpClient httpClient, IGroqInterfece groqService)
+        public CriptoService(
+            HttpClient httpClient, 
+            IGroqInterfece groqService,
+            IOptions<ExternalServicesOptions> options = null)
         {
             _httpClient = httpClient;
             _groqService = groqService;
+            _options = options?.Value ?? new ExternalServicesOptions();
         }
 
         public async Task<List<CriptoDto>> GetAllCoinsAsync(string coinGeckoApiKey, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(coinGeckoApiKey))
+            var resolvedApiKey = !string.IsNullOrWhiteSpace(coinGeckoApiKey)
+                ? coinGeckoApiKey
+                : _options.CoinGecko?.ApiKey;
+
+            if (string.IsNullOrWhiteSpace(resolvedApiKey))
             {
                 throw new ArgumentException("A chave da CoinGecko nao pode ser vazia.", nameof(coinGeckoApiKey));
             }
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, MarketQuery);
-            request.Headers.TryAddWithoutValidation("x-cg-demo-api-key", coinGeckoApiKey);
+            var currency = !string.IsNullOrWhiteSpace(_options.CoinGecko?.DefaultCurrency)
+                ? _options.CoinGecko.DefaultCurrency
+                : "usd";
+            var perPage = _options.CoinGecko?.DefaultCoinsPerPage > 0
+                ? _options.CoinGecko.DefaultCoinsPerPage
+                : 50;
+            var marketQuery = $"coins/markets?vs_currency={currency}&order=market_cap_desc&per_page={perPage}&page=1&sparkline=false";
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, marketQuery);
+            request.Headers.TryAddWithoutValidation("x-cg-demo-api-key", resolvedApiKey);
 
             using var response = await _httpClient.SendAsync(request, cancellationToken);
             var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -57,11 +74,16 @@ namespace CryptoOrbit.Services
             var coins = await GetAllCoinsAsync(coinGeckoApiKey, cancellationToken);
             var enrichedCoins = new List<CriptoDto>(coins.Count);
 
+            var delaySeconds = _options.NineRouter?.ThrottlingDelaySeconds ?? 0;
+
             foreach (var coin in coins)
             {
                 enrichedCoins.Add(await EnrichCoinAsync(coin, groqApiKey, cancellationToken));
 
-                await Task.Delay(TimeSpan.FromSeconds(7),cancellationToken);
+                if (delaySeconds > 0)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellationToken);
+                }
             }
 
             return enrichedCoins;
@@ -93,17 +115,28 @@ namespace CryptoOrbit.Services
 
         private async Task<CriptoDto> EnrichCoinAsync(CriptoDto coin, string groqApiKey, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(groqApiKey))
+            var resolvedApiKey = !string.IsNullOrWhiteSpace(groqApiKey)
+                ? groqApiKey
+                : _options.NineRouter?.ApiKey;
+
+            if (string.IsNullOrWhiteSpace(resolvedApiKey))
             {
-                throw new ArgumentException("A chave da Groq nao pode ser vazia.", nameof(groqApiKey));
+                throw new ArgumentException("A chave da IA nao pode ser vazia.", nameof(groqApiKey));
             }
 
             var prompt = BuildPrompt(coin);
-            var groqResponse = await _groqService.InfoCryptoForCoin(prompt, groqApiKey, cancellationToken);
+            var groqResponse = await _groqService.InfoCryptoForCoin(prompt, resolvedApiKey, cancellationToken);
+
+            var firstBrace = groqResponse.IndexOf('{');
+            var lastBrace = groqResponse.LastIndexOf('}');
+            if (firstBrace >= 0 && lastBrace > firstBrace)
+            {
+                groqResponse = groqResponse.Substring(firstBrace, lastBrace - firstBrace + 1);
+            }
 
             if (!groqResponse.StartsWith("{", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException($"A Groq nao retornou um JSON valido. Resposta recebida: {groqResponse}");
+                throw new InvalidOperationException($"A IA nao retornou um JSON valido. Resposta recebida: {groqResponse}");
             }
 
             var result = JsonSerializer.Deserialize<CriptoDto>(
@@ -115,7 +148,7 @@ namespace CryptoOrbit.Services
 
             if (result is null)
             {
-                throw new JsonException("Nao foi possivel desserializar a resposta da Groq.");
+                throw new JsonException("Nao foi possivel desserializar a resposta da IA.");
             }
 
             coin.Recommendation = result.Recommendation;
@@ -125,13 +158,18 @@ namespace CryptoOrbit.Services
             return coin;
         }
 
-        private static object BuildPrompt(CriptoDto coin)
+        private object BuildPrompt(CriptoDto coin)
         {
+            var model = !string.IsNullOrWhiteSpace(_options.NineRouter?.Model)
+                ? _options.NineRouter.Model
+                : "cc/claude-opus-4-6";
+            var temperature = _options.NineRouter?.Temperature ?? 0.1;
+
             return new
             {
-                model = "llama-3.3-70b-versatile",
-                response_format = new { type = "json_object" },
-                temperature = 0.1,
+                model = model,
+                temperature = temperature,
+                stream = false,
                 messages = new object[]
                 {
                     new
