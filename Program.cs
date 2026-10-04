@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Registro do cliente NineRouter (compatível com IAiService e IGroqInterfece)
+
 builder.Services
     .AddHttpClient<IAiService, NineRouterService>(client =>
     {
@@ -43,10 +43,10 @@ builder.Services
         client.BaseAddress = new Uri(baseUrl);
     });
 
-// Registro para resolver também como IGroqInterfece caso necessário
+
 builder.Services.AddScoped<IGroqInterfece>(sp => (NineRouterService)sp.GetRequiredService<IAiService>());
 
-// Registro do cliente CoinGecko
+
 builder.Services
     .AddHttpClient<ICripto, CriptoService>(client =>
     {
@@ -55,6 +55,8 @@ builder.Services
             : "https://api.coingecko.com/api/v3/";
 
         client.BaseAddress = new Uri(baseUrl);
+
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("CryptoOrbit/1.0 (Windows NT 10.0; Win64; x64)");
     });
 
 var app = builder.Build();
